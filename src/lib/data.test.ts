@@ -62,6 +62,22 @@ describe('getEpisodes', () => {
     expect(setEpisodesSnapshot).toHaveBeenCalled();
   });
 
+  it('uses a cached youtube match without recomputing or re-caching it', async () => {
+    vi.mocked(getFreshEpisodes).mockResolvedValue(null);
+    vi.mocked(fetchAllSpotifyEpisodes).mockResolvedValue([
+      { id: 'ep1', slug: 'ep-1', title: 'Ep 1', description: '', releaseDate: '2026-01-01', durationMs: 1, spotifyUrl: 'x' },
+    ]);
+    vi.mocked(fetchChannelUploads).mockResolvedValue([]);
+    vi.mocked(getCachedYoutubeMatch).mockResolvedValue({ videoId: 'vid1', status: 'confirmed', score: 0.9 });
+
+    const result = await getEpisodes();
+
+    expect(result[0].youtubeVideoId).toBe('vid1');
+    expect(result[0].youtubeMatchStatus).toBe('confirmed');
+    expect(matchEpisodeToUpload).not.toHaveBeenCalled();
+    expect(setCachedYoutubeMatch).not.toHaveBeenCalled();
+  });
+
   it('falls back to the last-good snapshot when a live fetch fails', async () => {
     vi.mocked(getFreshEpisodes).mockResolvedValue(null);
     vi.mocked(fetchAllSpotifyEpisodes).mockRejectedValue(new Error('Spotify down'));
