@@ -15,7 +15,8 @@ describe('mapSheetRowsToRetroList', () => {
     ]);
   });
 
-  it('skips rows missing a game name', () => {
+  it('skips rows missing a game name, logging which row was skipped', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
     const rows = [
       ['game', 'platform', 'submitted_by', 'notes'],
       ['', 'SNES', 'Alice', ''],
@@ -25,6 +26,9 @@ describe('mapSheetRowsToRetroList', () => {
     const result = mapSheetRowsToRetroList(rows);
     expect(result).toHaveLength(1);
     expect(result[0].game).toBe('Metroid');
+    expect(warn).toHaveBeenCalledTimes(1);
+    expect(warn.mock.calls[0][0]).toContain('data row 0');
+    warn.mockRestore();
   });
 
   it('returns an empty array for an empty sheet', () => {

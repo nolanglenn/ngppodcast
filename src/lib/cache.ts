@@ -5,8 +5,8 @@ const EPISODES_SNAPSHOT_KEY = 'episodes:v1:snapshot';
 const EPISODES_FRESH_KEY = 'episodes:v1:fresh';
 const EPISODES_TTL_SECONDS = 300; // 5 min
 
-const YOUTUBE_MATCH_KEY = (episodeId: string) => `youtube-match:${episodeId}`;
-const LOW_CONFIDENCE_LOG_KEY = 'youtube-match:low-confidence-log';
+const YOUTUBE_MATCH_KEY = (episodeId: string) => `youtube-match:v1:${episodeId}`;
+const LOW_CONFIDENCE_LOG_KEY = 'youtube-match:v1:low-confidence-log';
 
 const RETRO_LIST_KEY = 'retro-list:v1';
 

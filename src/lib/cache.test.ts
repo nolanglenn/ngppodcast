@@ -69,12 +69,12 @@ describe('episode snapshot cache', () => {
 describe('youtube match cache', () => {
   it('stores a low-confidence match and logs it for review', async () => {
     await setCachedYoutubeMatch('ep1', { videoId: 'vid1', status: 'low_confidence', score: 0.4 });
-    expect(kvMock.set).toHaveBeenCalledWith('youtube-match:ep1', {
+    expect(kvMock.set).toHaveBeenCalledWith('youtube-match:v1:ep1', {
       videoId: 'vid1',
       status: 'low_confidence',
       score: 0.4,
     });
-    expect(kvMock.sadd).toHaveBeenCalledWith('youtube-match:low-confidence-log', 'ep1');
+    expect(kvMock.sadd).toHaveBeenCalledWith('youtube-match:v1:low-confidence-log', 'ep1');
   });
 
   it('does not log a confirmed match', async () => {
@@ -91,7 +91,7 @@ describe('youtube match cache', () => {
     kvMock.get.mockResolvedValueOnce({ videoId: 'vid1', status: 'confirmed', score: 0.9 });
     const result = await getCachedYoutubeMatch('ep1');
     expect(result).toEqual({ videoId: 'vid1', status: 'confirmed', score: 0.9 });
-    expect(kvMock.get).toHaveBeenCalledWith('youtube-match:ep1');
+    expect(kvMock.get).toHaveBeenCalledWith('youtube-match:v1:ep1');
   });
 });
 

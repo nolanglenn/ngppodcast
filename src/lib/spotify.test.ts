@@ -65,4 +65,43 @@ describe('fetchAllSpotifyEpisodes', () => {
     });
     expect(fetchImpl).toHaveBeenCalledTimes(3); // token + 2 pages
   });
+
+  it('gives episodes with identical titles distinct slugs, and empty-slug titles their id', async () => {
+    process.env.SPOTIFY_CLIENT_ID = 'id';
+    process.env.SPOTIFY_CLIENT_SECRET = 'secret';
+
+    const item = (id: string, name: string) => ({
+      id,
+      name,
+      description: '',
+      release_date: '2026-01-01',
+      duration_ms: 1,
+      external_urls: { spotify: `https://open.spotify.com/episode/${id}` },
+    });
+
+    const fetchImpl = mockFetchSequence([
+      { ok: true, json: () => ({ access_token: 'token123', expires_in: 3600, token_type: 'Bearer' }) },
+      {
+        ok: true,
+        json: () => ({
+          items: [
+            item('aaaa1111', 'Mailbag Episode'),
+            item('bbbb2222', 'Mailbag Episode'),
+            item('cccc3333', '★☆★'),
+          ],
+          next: null,
+        }),
+      },
+    ]);
+
+    const episodes = await fetchAllSpotifyEpisodes('show1', fetchImpl);
+
+    expect(episodes.map((e) => e.slug)).toEqual([
+      'mailbag-episode',
+      'mailbag-episode-bbbb2222',
+      'cccc3333',
+    ]);
+    expect(new Set(episodes.map((e) => e.slug)).size).toBe(3);
+    expect(episodes.every((e) => e.slug.length > 0)).toBe(true);
+  });
 });

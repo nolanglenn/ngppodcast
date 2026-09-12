@@ -1,5 +1,5 @@
 import { getRequiredEnv } from './env';
-import { slugify } from './slug';
+import { episodeSlug, ensureUniqueSlugs } from './slug';
 import type { Episode } from './types';
 
 interface SpotifyTokenResponse {
@@ -45,7 +45,7 @@ async function getSpotifyAccessToken(fetchImpl: typeof fetch): Promise<string> {
 function mapSpotifyEpisode(item: SpotifyEpisodeItem): BaseEpisode {
   return {
     id: item.id,
-    slug: slugify(item.name),
+    slug: episodeSlug(item.name, item.id),
     title: item.name,
     description: item.description,
     releaseDate: item.release_date,
@@ -70,5 +70,7 @@ export async function fetchAllSpotifyEpisodes(
     url = page.next;
   }
 
-  return items.map(mapSpotifyEpisode);
+  // Dedup needs to see every episode at once, so it happens here rather than in
+  // mapSpotifyEpisode (which only ever sees a single episode).
+  return ensureUniqueSlugs(items.map(mapSpotifyEpisode));
 }

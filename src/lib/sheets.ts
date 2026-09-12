@@ -18,7 +18,14 @@ export function mapSheetRowsToRetroList(rows: string[][]): RetroListItem[] {
   const items: RetroListItem[] = [];
   dataRows.forEach((row, i) => {
     const game = gameIdx >= 0 ? row[gameIdx]?.trim() : undefined;
-    if (!game) return; // skip malformed/empty row rather than crash the page
+    if (!game) {
+      // skip malformed/empty row rather than crash the page
+      console.warn(
+        `[sheets] skipping Retro List data row ${i} (sheet row ${i + 2}): no value in the ` +
+          `"game" column (header index ${gameIdx}${gameIdx < 0 ? ' — header column not found' : ''})`
+      );
+      return;
+    }
     items.push({
       id: `row-${i}`,
       game,
