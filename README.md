@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# New Game Plus Podcast — Site
 
-## Getting Started
+Next.js site for ngppodcast.com: searchable episode archive (Spotify + YouTube
+embeds) and a Retro Master List. See
+`docs/superpowers/specs/2026-09-12-ngppodcast-site-rebuild-design.md` for the
+full design and `docs/superpowers/plans/2026-09-12-ngppodcast-site-rebuild.md`
+for how it was built.
 
-First, run the development server:
+## Local development
 
 ```bash
+npm install
+cp .env.local.example .env.local   # fill in the values below
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Run `npm test` for unit/integration tests, `npm run test:e2e` for Playwright
+smoke tests (these run against mock data, no live API keys required).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Required environment variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variable | Where to get it |
+| --- | --- |
+| `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET` | Spotify Developer Dashboard → create an app (client credentials flow, no user login needed) |
+| `SPOTIFY_SHOW_ID` | The show's Spotify ID, from its `open.spotify.com/show/<id>` URL |
+| `YOUTUBE_API_KEY` | Google Cloud Console → enable "YouTube Data API v3" → create an API key |
+| `YOUTUBE_CHANNEL_ID` | The channel's ID (Channel → About → Share → Copy channel ID) |
+| `GOOGLE_SHEETS_API_KEY` | Google Cloud Console → enable "Google Sheets API" → create an API key (can be the same key as YouTube's) |
+| `RETRO_LIST_SHEET_ID` | The Sheet's ID from its URL: `docs.google.com/spreadsheets/d/<id>/edit` |
+| `RETRO_LIST_RANGE` | e.g. `Sheet1!A:D` — adjust to match the real tab name and column range |
+| `REVALIDATE_SECRET` | Any random string you generate — shared between this app and the Apps Script webhook below |
+| `CRON_SECRET` | Any random string you generate — Vercel automatically sends it as `Authorization: Bearer <value>` on Cron requests once set as a Vercel env var |
+| `KV_REST_API_URL`, `KV_REST_API_TOKEN` | From the Vercel KV dashboard once you attach a KV store to this project |
 
-## Learn More
+**The Retro Master List Google Sheet must be shared as "Anyone with the link —
+Viewer"** so the Sheets API can read it with just an API key. Its header row
+must contain (case-insensitive) `game`, `platform`, `submitted_by`, and
+`notes` columns — if your real Sheet uses different header text, update the
+column lookups in `src/lib/sheets.ts`.
 
-To learn more about Next.js, take a look at the following resources:
+## Near-instant Retro List updates (Apps Script webhook)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+In the Google Sheet: Extensions → Apps Script, paste and save, then add an
+"On edit" installable trigger for `onEditTrigger`:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```javascript
+function onEditTrigger(e) {
+  var url = 'https://<your-deployed-domain>/api/revalidate?secret=<REVALIDATE_SECRET value>';
+  UrlFetchApp.fetch(url);
+}
+```
 
-## Deploy on Vercel
+This calls the revalidation endpoint every time the Sheet is edited. The
+15-minute Vercel Cron job (`vercel.json`) is the fallback if this ever
+doesn't fire.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deploying
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Push this repo to GitHub.
+2. Import it into Vercel, attach a Vercel KV store (free tier), and set all
+   the environment variables above in the Vercel project settings.
+3. Deploy. The site will be live on its `*.vercel.app` URL.
+4. **Do not point ngppodcast.com at this deployment without explicit
+   go-ahead** — that domain cutover is a separate, deliberate step once the
+   new site has been reviewed on its Vercel URL.
