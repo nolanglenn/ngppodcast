@@ -37,7 +37,7 @@ export async function setCachedYoutubeMatch(episodeId: string, match: YoutubeMat
 }
 
 export async function getLowConfidenceEpisodeIds(): Promise<string[]> {
-  return (await kv.smembers<string>(LOW_CONFIDENCE_LOG_KEY)) ?? [];
+  return (await kv.smembers(LOW_CONFIDENCE_LOG_KEY)) ?? [];
 }
 
 export async function getCachedRetroList(): Promise<RetroListItem[] | null> {
