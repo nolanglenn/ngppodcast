@@ -17,4 +17,13 @@ describe('SpoilerCard', () => {
     fireEvent.mouseLeave(card);
     expect(screen.queryByText('Chrono Trigger')).not.toBeInTheDocument();
   });
+
+  it('reveals content on focus and hides it again on blur', () => {
+    render(<SpoilerCard label="Reveal me">Chrono Trigger</SpoilerCard>);
+    const card = screen.getByRole('button');
+    fireEvent.focus(card);
+    expect(screen.getByText('Chrono Trigger')).toBeInTheDocument();
+    fireEvent.blur(card);
+    expect(screen.queryByText('Chrono Trigger')).not.toBeInTheDocument();
+  });
 });
