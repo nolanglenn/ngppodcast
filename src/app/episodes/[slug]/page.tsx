@@ -15,7 +15,11 @@ export default async function EpisodeDetailPage({ params }: { params: { slug: st
       <p>{episode.releaseDate}</p>
       <p>{episode.description}</p>
       <SpotifyEmbed episodeId={episode.id} />
-      {episode.youtubeVideoId && <YoutubeEmbed videoId={episode.youtubeVideoId} />}
+      {/* Only confirmed matches are shown publicly — a low-confidence match keeps
+          its videoId in the data layer for admin review, but must never render here. */}
+      {episode.youtubeMatchStatus === 'confirmed' && episode.youtubeVideoId && (
+        <YoutubeEmbed videoId={episode.youtubeVideoId} />
+      )}
     </main>
   );
 }

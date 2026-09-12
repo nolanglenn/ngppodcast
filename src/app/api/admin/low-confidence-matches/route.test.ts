@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { NextRequest } from 'next/server';
 
 vi.mock('@/lib/cache', () => ({ getLowConfidenceEpisodeIds: vi.fn() }));
@@ -9,11 +9,24 @@ import { GET } from './route';
 
 describe('GET /api/admin/low-confidence-matches', () => {
   beforeEach(() => {
-    process.env.REVALIDATE_SECRET = 'admin-secret';
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    process.env.ADMIN_SECRET = 'admin-secret';
+    // The Sheets webhook secret must NOT grant admin access.
+    process.env.REVALIDATE_SECRET = 'webhook-secret';
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it('rejects requests without the secret', async () => {
     const req = new NextRequest('http://localhost/api/admin/low-confidence-matches');
+    const res = await GET(req);
+    expect(res.status).toBe(401);
+  });
+
+  it('rejects the Sheets webhook secret — ADMIN_SECRET is a separate credential', async () => {
+    const req = new NextRequest('http://localhost/api/admin/low-confidence-matches?secret=webhook-secret');
     const res = await GET(req);
     expect(res.status).toBe(401);
   });

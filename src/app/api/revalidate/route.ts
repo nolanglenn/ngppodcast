@@ -14,7 +14,8 @@ export async function GET(request: NextRequest) {
   try {
     const items = await refreshRetroList();
     return NextResponse.json({ ok: true, count: items.length });
-  } catch {
+  } catch (err) {
+    console.error('[api/revalidate] retro list refresh failed', err);
     return NextResponse.json({ error: 'Refresh failed' }, { status: 503 });
   }
 }
