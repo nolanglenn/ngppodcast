@@ -1,6 +1,21 @@
 import type { Metadata } from 'next';
+import { Space_Grotesk, IBM_Plex_Sans } from 'next/font/google';
 import { Nav } from './Nav';
 import './globals.css';
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ['latin'],
+  weight: ['500', '700'],
+  variable: '--font-space-grotesk',
+  display: 'swap',
+});
+
+const plexSans = IBM_Plex_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-plex-sans',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'New Game Plus Podcast',
@@ -17,16 +32,19 @@ const FOOTER_LINKS = [
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${spaceGrotesk.variable} ${plexSans.variable}`}>
       <body>
         <Nav />
         {children}
-        <footer>
-          {FOOTER_LINKS.map((link) => (
-            <a key={link.label} href={link.href}>
-              {link.label}
-            </a>
-          ))}
+        <footer className="ngp-footer">
+          <div className="ngp-footer-links">
+            {FOOTER_LINKS.map((link) => (
+              <a key={link.label} href={link.href}>
+                {link.label}
+              </a>
+            ))}
+          </div>
+          <div className="ngp-footer-copy">&copy; New Game Plus Podcast — a weekly retro gaming podcast</div>
         </footer>
       </body>
     </html>

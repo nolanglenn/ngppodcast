@@ -19,8 +19,24 @@ export function EpisodeArchiveClient({ episodes }: { episodes: ArchiveEpisode[] 
       placeholder="Search episodes..."
       getKey={(e) => e.id}
       renderItem={(e) => (
-        <Link href={`/episodes/${e.slug}`}>
-          {e.title} — {e.releaseDate}
+        <Link href={`/episodes/${e.slug}`} className="ngp-list-row">
+          <span>
+            <span className="ngp-list-title">{e.title}</span>
+            <span className="ngp-list-date">{e.releaseDate}</span>
+          </span>
+          <svg
+            className="ngp-list-chevron"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M9 6l6 6-6 6" />
+          </svg>
         </Link>
       )}
     />

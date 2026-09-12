@@ -22,6 +22,9 @@
 .DS_Store
 *.pem
 
+# Claude Code scratch/working files
+.claude/
+
 # debug
 npm-debug.log*
 yarn-debug.log*

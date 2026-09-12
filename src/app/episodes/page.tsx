@@ -16,8 +16,13 @@ export default async function EpisodesPage() {
 
   return (
     <main>
-      <h1>Episodes</h1>
-      <EpisodeArchiveClient episodes={archiveEpisodes} />
+      <div className="ngp-page-header">
+        <h1>Episodes</h1>
+        <p>600+ episodes and counting.</p>
+      </div>
+      <div className="ngp-section">
+        <EpisodeArchiveClient episodes={archiveEpisodes} />
+      </div>
     </main>
   );
 }

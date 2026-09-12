@@ -23,7 +23,14 @@ export default async function HomePage() {
 
   return (
     <main>
-      <h1>New Game Plus Podcast</h1>
+      <div className="ngp-hero">
+        <p className="ngp-eyebrow">Weekly Retro Gaming Podcast</p>
+        <h1>New Game Plus Podcast</h1>
+        <p>
+          New games come and go. We come back for the old ones — a weekly deep-dive into the games
+          worth replaying.
+        </p>
+      </div>
       <HomeContent latestEpisode={latestEpisode} gameOfTheWeek={gameOfTheWeek} />
     </main>
   );

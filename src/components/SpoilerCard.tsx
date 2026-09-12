@@ -19,9 +19,16 @@ export function SpoilerCard({ label, children }: SpoilerCardProps) {
       tabIndex={0}
       role="button"
       aria-label={`${label}: hover or focus to reveal`}
-      style={{ filter: revealed ? 'none' : undefined, cursor: 'pointer' }}
+      className="ngp-spoiler"
     >
-      {revealed ? children : label}
+      {revealed ? (
+        <span className="ngp-spoiler-reveal">{children}</span>
+      ) : (
+        <>
+          <span className="ngp-spoiler-badge">?</span>
+          <span className="ngp-spoiler-label">{label}</span>
+        </>
+      )}
     </div>
   );
 }
