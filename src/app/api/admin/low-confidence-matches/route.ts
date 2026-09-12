@@ -8,8 +8,12 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const ids = await getLowConfidenceEpisodeIds();
-  const episodes = await getEpisodes();
-  const flagged = episodes.filter((e) => ids.includes(e.id));
-  return NextResponse.json(flagged);
+  try {
+    const ids = await getLowConfidenceEpisodeIds();
+    const episodes = await getEpisodes();
+    const flagged = episodes.filter((e) => ids.includes(e.id));
+    return NextResponse.json(flagged);
+  } catch {
+    return NextResponse.json({ error: 'Low-confidence matches temporarily unavailable' }, { status: 503 });
+  }
 }

@@ -33,4 +33,14 @@ describe('GET /api/admin/low-confidence-matches', () => {
     expect(body).toHaveLength(1);
     expect(body[0].id).toBe('ep2');
   });
+
+  it('returns 503 when getEpisodes throws', async () => {
+    vi.mocked(getLowConfidenceEpisodeIds).mockResolvedValue([]);
+    vi.mocked(getEpisodes).mockRejectedValue(new Error('down'));
+
+    const req = new NextRequest('http://localhost/api/admin/low-confidence-matches?secret=admin-secret');
+    const res = await GET(req);
+
+    expect(res.status).toBe(503);
+  });
 });
