@@ -1,34 +1,29 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { HomeContent } from './HomeContent';
-import type { Episode, RetroListItem } from '@/lib/types';
+import type { Episode } from '@/lib/types';
 
 const episode: Episode = {
   id: 'ep1', slug: 'episode-one', title: 'Episode One', description: '', releaseDate: '2026-01-01',
   durationMs: 1, spotifyUrl: 'x', youtubeVideoId: null, youtubeMatchStatus: 'none',
 };
 
-const gameOfTheWeek: RetroListItem = {
-  id: 'row-0', game: 'Chrono Trigger', platform: 'SNES', submittedBy: 'Alice', notes: '',
-};
-
 describe('HomeContent', () => {
   it('shows the latest episode title and embed', () => {
-    render(<HomeContent latestEpisode={episode} gameOfTheWeek={gameOfTheWeek} />);
+    render(<HomeContent latestEpisode={episode} />);
     expect(screen.getByText('Episode One')).toBeInTheDocument();
     expect(screen.getByTitle('Spotify episode player')).toBeInTheDocument();
   });
 
-  it('hides the Game of the Week pick until hovered', () => {
-    render(<HomeContent latestEpisode={episode} gameOfTheWeek={gameOfTheWeek} />);
-    expect(screen.queryByText(/Chrono Trigger/)).not.toBeInTheDocument();
-    fireEvent.mouseEnter(screen.getByRole('button'));
-    expect(screen.getByText(/Chrono Trigger/)).toBeInTheDocument();
+  it('always shows the Patreon support link', () => {
+    render(<HomeContent latestEpisode={episode} />);
+    expect(screen.getByRole('link', { name: /Become a Patron/ })).toBeInTheDocument();
   });
 
-  it('renders nothing for missing sections gracefully', () => {
-    render(<HomeContent latestEpisode={null} gameOfTheWeek={null} />);
+  it('renders nothing for the episode section when there is no latest episode', () => {
+    render(<HomeContent latestEpisode={null} />);
     expect(screen.queryByTitle('Spotify episode player')).not.toBeInTheDocument();
-    expect(screen.queryByRole('button')).not.toBeInTheDocument();
+    // The Patreon CTA doesn't depend on episode data, so it still renders.
+    expect(screen.getByRole('link', { name: /Become a Patron/ })).toBeInTheDocument();
   });
 });

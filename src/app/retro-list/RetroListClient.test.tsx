@@ -4,18 +4,19 @@ import { RetroListClient } from './RetroListClient';
 import type { RetroListItem } from '@/lib/types';
 
 const items: RetroListItem[] = [
-  { id: 'row-0', game: 'Chrono Trigger', platform: 'SNES', submittedBy: 'Alice', notes: '' },
-  { id: 'row-1', game: 'Super Metroid', platform: 'SNES', submittedBy: 'Bob', notes: '' },
+  { id: 'row-0', game: 'Chrono Trigger', platform: 'SNES', releaseYear: '1995', episodeNumber: '15' },
+  { id: 'row-1', game: 'Super Metroid', platform: 'SNES', releaseYear: '1994', episodeNumber: '' },
 ];
 
 describe('RetroListClient', () => {
-  it('lists all games with platform and submitter', () => {
+  it('lists all games with platform and release year', () => {
     render(<RetroListClient items={items} />);
     expect(screen.getByText(/Chrono Trigger/)).toBeInTheDocument();
     expect(screen.getByText(/Super Metroid/)).toBeInTheDocument();
+    expect(screen.getByText('1995 · Episode #15')).toBeInTheDocument();
   });
 
-  it('filters by search across game, platform, and submitter', () => {
+  it('filters by search across game and platform', () => {
     render(<RetroListClient items={items} />);
     fireEvent.change(screen.getByPlaceholderText('Search games...'), { target: { value: 'Chrono' } });
     expect(screen.getByText(/Chrono Trigger/)).toBeInTheDocument();

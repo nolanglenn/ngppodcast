@@ -9,7 +9,7 @@ export default async function RetroListPage() {
     <main>
       <div className="ngp-page-header">
         <h1>Retro Master List</h1>
-        <p>Every game our listeners have submitted. We pick one at random each week — see this week&rsquo;s pick on the home page.</p>
+        <p>Every game we&rsquo;ve covered on the show, with the episode it aired in.</p>
       </div>
       <div className="ngp-section">
         <RetroListClient items={items} />

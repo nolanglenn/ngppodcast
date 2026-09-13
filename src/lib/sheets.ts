@@ -10,10 +10,10 @@ export function mapSheetRowsToRetroList(rows: string[][]): RetroListItem[] {
   const [header, ...dataRows] = rows;
   const colIndex = (name: string) => header.findIndex((h) => h.trim().toLowerCase() === name);
 
-  const gameIdx = colIndex('game');
-  const platformIdx = colIndex('platform');
-  const submittedByIdx = colIndex('submitted_by');
-  const notesIdx = colIndex('notes');
+  const gameIdx = colIndex('title');
+  const platformIdx = colIndex('original system');
+  const yearIdx = colIndex('date');
+  const episodeIdx = colIndex('episode #');
 
   const items: RetroListItem[] = [];
   dataRows.forEach((row, i) => {
@@ -22,7 +22,7 @@ export function mapSheetRowsToRetroList(rows: string[][]): RetroListItem[] {
       // skip malformed/empty row rather than crash the page
       console.warn(
         `[sheets] skipping Retro List data row ${i} (sheet row ${i + 2}): no value in the ` +
-          `"game" column (header index ${gameIdx}${gameIdx < 0 ? ' — header column not found' : ''})`
+          `"Title" column (header index ${gameIdx}${gameIdx < 0 ? ' — header column not found' : ''})`
       );
       return;
     }
@@ -30,8 +30,8 @@ export function mapSheetRowsToRetroList(rows: string[][]): RetroListItem[] {
       id: `row-${i}`,
       game,
       platform: (platformIdx >= 0 ? row[platformIdx] : '') ?? '',
-      submittedBy: (submittedByIdx >= 0 ? row[submittedByIdx] : '') ?? '',
-      notes: (notesIdx >= 0 ? row[notesIdx] : '') ?? '',
+      releaseYear: (yearIdx >= 0 ? row[yearIdx] : '') ?? '',
+      episodeNumber: (episodeIdx >= 0 ? row[episodeIdx] : '') ?? '',
     });
   });
   return items;

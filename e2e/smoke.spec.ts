@@ -19,10 +19,8 @@ test('retro list page renders and searches', async ({ page }) => {
   await expect(page.getByText('Chrono Trigger')).toBeVisible();
 });
 
-test('home page shows latest episode and a spoiler-tagged game of the week', async ({ page }) => {
+test('home page shows the latest episode and the Patreon support link', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByText('Mock Episode One')).toBeVisible();
-  await expect(page.getByText('Chrono Trigger')).toBeHidden();
-  await page.getByRole('button').hover();
-  await expect(page.getByText(/Chrono Trigger/)).toBeVisible();
+  await expect(page.getByRole('link', { name: /Become a Patron/ })).toBeVisible();
 });

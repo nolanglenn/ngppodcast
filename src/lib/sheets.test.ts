@@ -4,23 +4,23 @@ import { mapSheetRowsToRetroList, fetchRetroListRows } from './sheets';
 describe('mapSheetRowsToRetroList', () => {
   it('maps header + data rows into RetroListItem objects', () => {
     const rows = [
-      ['game', 'platform', 'submitted_by', 'notes'],
-      ['Chrono Trigger', 'SNES', 'Alice', 'Great pick'],
-      ['Metroid', 'NES', 'Bob', ''],
+      ['Title', 'Date', 'Original System', 'Episode #'],
+      ['Chrono Trigger', '1995', 'SNES', '15'],
+      ['Metroid', '1986', 'NES', ''],
     ];
 
     expect(mapSheetRowsToRetroList(rows)).toEqual([
-      { id: 'row-0', game: 'Chrono Trigger', platform: 'SNES', submittedBy: 'Alice', notes: 'Great pick' },
-      { id: 'row-1', game: 'Metroid', platform: 'NES', submittedBy: 'Bob', notes: '' },
+      { id: 'row-0', game: 'Chrono Trigger', platform: 'SNES', releaseYear: '1995', episodeNumber: '15' },
+      { id: 'row-1', game: 'Metroid', platform: 'NES', releaseYear: '1986', episodeNumber: '' },
     ]);
   });
 
-  it('skips rows missing a game name, logging which row was skipped', () => {
+  it('skips rows missing a game title, logging which row was skipped', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
     const rows = [
-      ['game', 'platform', 'submitted_by', 'notes'],
-      ['', 'SNES', 'Alice', ''],
-      ['Metroid', 'NES', 'Bob', ''],
+      ['Title', 'Date', 'Original System', 'Episode #'],
+      ['', '1995', 'SNES', ''],
+      ['Metroid', '1986', 'NES', ''],
     ];
 
     const result = mapSheetRowsToRetroList(rows);
@@ -40,18 +40,18 @@ describe('fetchRetroListRows', () => {
   it('calls the Sheets API with the configured sheet id, range, and key', async () => {
     process.env.RETRO_LIST_SHEET_ID = 'sheet123';
     process.env.GOOGLE_SHEETS_API_KEY = 'key123';
-    process.env.RETRO_LIST_RANGE = 'Sheet1!A:D';
+    process.env.RETRO_LIST_RANGE = 'Sheet1!A2:D';
 
     const fetchImpl = vi.fn(async () => ({
       ok: true,
-      json: async () => ({ values: [['game', 'platform', 'submitted_by', 'notes']] }),
+      json: async () => ({ values: [['Title', 'Date', 'Original System', 'Episode #']] }),
     })) as unknown as typeof fetch;
 
     const rows = await fetchRetroListRows(fetchImpl);
 
     expect(fetchImpl).toHaveBeenCalledWith(
-      expect.stringContaining('spreadsheets/sheet123/values/Sheet1!A%3AD?key=key123')
+      expect.stringContaining('spreadsheets/sheet123/values/Sheet1!A2%3AD?key=key123')
     );
-    expect(rows).toEqual([['game', 'platform', 'submitted_by', 'notes']]);
+    expect(rows).toEqual([['Title', 'Date', 'Original System', 'Episode #']]);
   });
 });

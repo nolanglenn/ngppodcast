@@ -206,7 +206,7 @@ describe('getEpisodes', () => {
 });
 
 describe('getRetroList', () => {
-  const items = [{ id: 'row-0', game: 'Chrono Trigger', platform: 'SNES', submittedBy: 'A', notes: '' }];
+  const items = [{ id: 'row-0', game: 'Chrono Trigger', platform: 'SNES', releaseYear: '1995', episodeNumber: '15' }];
 
   it('returns the cached list without hitting Sheets', async () => {
     vi.mocked(getCachedRetroList).mockResolvedValue(items);
@@ -240,8 +240,8 @@ describe('getRetroList', () => {
 
 describe('refreshRetroList', () => {
   it('caches a successfully mapped list', async () => {
-    const items = [{ id: 'row-0', game: 'Metroid', platform: 'NES', submittedBy: 'B', notes: '' }];
-    vi.mocked(fetchRetroListRows).mockResolvedValue([['game'], ['Metroid']]);
+    const items = [{ id: 'row-0', game: 'Metroid', platform: 'NES', releaseYear: '1986', episodeNumber: '' }];
+    vi.mocked(fetchRetroListRows).mockResolvedValue([['Title'], ['Metroid']]);
     vi.mocked(mapSheetRowsToRetroList).mockReturnValue(items);
 
     expect(await refreshRetroList()).toEqual(items);
@@ -269,7 +269,7 @@ describe('refreshRetroList', () => {
   });
 
   it('keeps serving the previous cached list on a mapping failure', async () => {
-    const previous = [{ id: 'row-0', game: 'Metroid', platform: 'NES', submittedBy: 'B', notes: '' }];
+    const previous = [{ id: 'row-0', game: 'Metroid', platform: 'NES', releaseYear: '1986', episodeNumber: '' }];
     vi.mocked(fetchRetroListRows).mockResolvedValue([
       ['Game Title', 'System'],
       ['Chrono Trigger', 'SNES'],
