@@ -6,17 +6,30 @@ embeds) and a Retro Master List. See
 full design and `docs/superpowers/plans/2026-09-12-ngppodcast-site-rebuild.md`
 for how it was built.
 
-## Before launch: replace the placeholders
+## TODO before going live
 
-The site ships with **placeholder links that are broken until you replace
-them**. Do this before (or immediately after) going live:
+- [ ] Get real credentials (Spotify, YouTube, Google Sheets) and fill in
+      `.env.local` / Vercel env vars — see **Required environment variables**
+      below.
+- [ ] Replace the placeholder links — the site ships with these **broken
+      until replaced**:
 
-| What | Where | Placeholder |
-| --- | --- | --- |
-| Footer links (Spotify, YouTube, Apple Podcasts, Twitter/X, Discord) | `FOOTER_LINKS` in `src/app/layout.tsx` | `REPLACE_WITH_SHOW_ID`, `REPLACE_WITH_CHANNEL_HANDLE`, `REPLACE_WITH_SHOW_URL`, `REPLACE_WITH_HANDLE`, `REPLACE_WITH_INVITE` |
-| Contact email | `src/app/about/page.tsx` | `REPLACE_WITH_CONTACT_EMAIL` |
+  | What | Where | Placeholder |
+  | --- | --- | --- |
+  | Footer links (Spotify, YouTube, Apple Podcasts, Twitter/X, Discord) | `FOOTER_LINKS` in `src/app/layout.tsx` | `REPLACE_WITH_SHOW_ID`, `REPLACE_WITH_CHANNEL_HANDLE`, `REPLACE_WITH_SHOW_URL`, `REPLACE_WITH_HANDLE`, `REPLACE_WITH_INVITE` |
+  | Contact email | `src/app/about/page.tsx` | `REPLACE_WITH_CONTACT_EMAIL` |
+  | Patreon button | `PATREON_URL` in `src/app/HomeContent.tsx` | `REPLACE_WITH_PATREON_HANDLE` |
 
-Search the repo for `REPLACE_WITH_` to find them all.
+  Search the repo for `REPLACE_WITH_` to find them all.
+- [ ] Confirm the real Retro Master List sheet's header row matches what
+      `src/lib/sheets.ts` expects, and that it's shared correctly (see
+      **Required environment variables** below).
+- [ ] Verify the "Game of the Week" row-order assumption against the real
+      sheet (see below) — adjust `src/app/page.tsx` if it doesn't hold.
+- [ ] Set up the Apps Script webhook and `CRON_SECRET` (see **Near-instant
+      Retro List updates** below).
+- [ ] Domain cutover to ngppodcast.com — last step, **requires explicit
+      go-ahead**, not part of any of the above.
 
 ## Local development
 
