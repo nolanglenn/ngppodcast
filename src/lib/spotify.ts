@@ -12,6 +12,9 @@ interface SpotifyEpisodeItem {
   id: string;
   name: string;
   description: string;
+  // Same content as `description`, but with paragraph structure intact — see
+  // the Episode.descriptionHtml doc comment for why this is the one to render.
+  html_description?: string;
   release_date: string;
   duration_ms: number;
   external_urls: { spotify: string };
@@ -50,6 +53,7 @@ function mapSpotifyEpisode(item: SpotifyEpisodeItem): BaseEpisode {
     slug: episodeSlug(item.name, item.id),
     title: item.name,
     description: item.description,
+    descriptionHtml: item.html_description || undefined,
     releaseDate: item.release_date,
     durationMs: item.duration_ms,
     spotifyUrl: item.external_urls.spotify,

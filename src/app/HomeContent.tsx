@@ -1,4 +1,5 @@
 import { SpotifyEmbed } from '@/components/SpotifyEmbed';
+import { EpisodeDescription } from '@/components/EpisodeDescription';
 import type { Episode } from '@/lib/types';
 
 // Set up a Patreon page for the show, then replace this with the real URL.
@@ -24,7 +25,11 @@ export function HomeContent({ latestEpisode }: HomeContentProps) {
                 <span className="ngp-eyebrow-coral">Latest Episode</span>
                 <h2 className="ngp-episode-title">{latestEpisode.title}</h2>
                 <span className="ngp-episode-date">{latestEpisode.releaseDate}</span>
-                {latestEpisode.description && <p className="ngp-episode-desc">{latestEpisode.description}</p>}
+                <EpisodeDescription
+                  description={latestEpisode.description}
+                  descriptionHtml={latestEpisode.descriptionHtml}
+                  className="ngp-episode-desc"
+                />
               </div>
             </div>
             <div className="ngp-embed-frame">

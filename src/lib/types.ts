@@ -3,6 +3,14 @@ export interface Episode {
   slug: string;
   title: string;
   description: string;
+  /**
+   * Spotify's `html_description` — the same show notes as `description`, but with
+   * paragraph/line structure intact. Spotify's plain `description` field strips all
+   * separators (verified against real episodes: no `\n`, no space between segments),
+   * so this is what should actually be rendered; `description` is a plain-text
+   * fallback. Optional so existing fixtures/mocks don't need updating.
+   */
+  descriptionHtml?: string;
   releaseDate: string; // ISO 8601 date, e.g. "2026-01-01"
   durationMs: number;
   spotifyUrl: string;

@@ -263,6 +263,19 @@ h3,
   font-size: 14px;
   color: var(--text-muted);
   line-height: 1.55;
+  /* Plain-text fallback (no descriptionHtml): preserve any literal newlines
+     rather than collapsing them into one run-on paragraph. */
+  white-space: pre-line;
+}
+
+.ngp-episode-desc p,
+.ngp-detail-desc p {
+  margin: 0 0 0.75em;
+}
+
+.ngp-episode-desc p:last-child,
+.ngp-detail-desc p:last-child {
+  margin-bottom: 0;
 }
 
 .ngp-embed-frame {
@@ -558,6 +571,7 @@ h3,
   font-size: 15px;
   color: var(--text-muted);
   line-height: 1.65;
+  white-space: pre-line; /* preserve real Spotify descriptions' line breaks */
 }
 
 .ngp-embed-caption {

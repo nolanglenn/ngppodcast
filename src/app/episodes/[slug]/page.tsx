@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { getEpisodeBySlug } from '@/lib/data';
 import { SpotifyEmbed } from '@/components/SpotifyEmbed';
 import { YoutubeEmbed } from '@/components/YoutubeEmbed';
+import { EpisodeDescription } from '@/components/EpisodeDescription';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,7 +25,11 @@ export default async function EpisodeDetailPage({ params }: { params: { slug: st
           <div>
             <h1 className="ngp-detail-title">{episode.title}</h1>
             <div className="ngp-detail-meta">{episode.releaseDate}</div>
-            <p className="ngp-detail-desc">{episode.description}</p>
+            <EpisodeDescription
+              description={episode.description}
+              descriptionHtml={episode.descriptionHtml}
+              className="ngp-detail-desc"
+            />
           </div>
 
           <div>
