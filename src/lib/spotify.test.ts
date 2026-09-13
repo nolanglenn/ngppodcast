@@ -105,6 +105,45 @@ describe('fetchAllSpotifyEpisodes', () => {
     expect(episodes.every((e) => e.slug.length > 0)).toBe(true);
   });
 
+  it('maps html_description to descriptionHtml, and omits it when absent', async () => {
+    process.env.SPOTIFY_CLIENT_ID = 'id';
+    process.env.SPOTIFY_CLIENT_SECRET = 'secret';
+
+    const fetchImpl = mockFetchSequence([
+      { ok: true, json: () => ({ access_token: 'token123', expires_in: 3600, token_type: 'Bearer' }) },
+      {
+        ok: true,
+        json: () => ({
+          items: [
+            {
+              id: 'ep1',
+              name: 'Has HTML',
+              description: 'plain textno separators',
+              html_description: '<p>plain text</p><p>no separators</p>',
+              release_date: '2026-01-01',
+              duration_ms: 1000,
+              external_urls: { spotify: 'https://open.spotify.com/episode/ep1' },
+            },
+            {
+              id: 'ep2',
+              name: 'No HTML field',
+              description: 'older episode, no html_description at all',
+              release_date: '2026-01-08',
+              duration_ms: 1000,
+              external_urls: { spotify: 'https://open.spotify.com/episode/ep2' },
+            },
+          ],
+          next: null,
+        }),
+      },
+    ]);
+
+    const episodes = await fetchAllSpotifyEpisodes('show1', fetchImpl);
+
+    expect(episodes[0].descriptionHtml).toBe('<p>plain text</p><p>no separators</p>');
+    expect(episodes[1].descriptionHtml).toBeUndefined();
+  });
+
   it('skips null items (episodes unavailable in the API market)', async () => {
     process.env.SPOTIFY_CLIENT_ID = 'id';
     process.env.SPOTIFY_CLIENT_SECRET = 'secret';
