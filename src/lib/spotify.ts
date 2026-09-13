@@ -18,7 +18,9 @@ interface SpotifyEpisodeItem {
 }
 
 interface SpotifyEpisodesPage {
-  items: SpotifyEpisodeItem[];
+  // Spotify's API returns a null entry for episodes not available in the
+  // API's market (e.g. region-restricted) — skip those rather than crash.
+  items: (SpotifyEpisodeItem | null)[];
   next: string | null;
 }
 
@@ -66,7 +68,7 @@ export async function fetchAllSpotifyEpisodes(
     const res = await fetchImpl(url, { headers: { Authorization: `Bearer ${token}` } });
     if (!res.ok) throw new Error(`Spotify episodes request failed: ${res.status}`);
     const page = (await res.json()) as SpotifyEpisodesPage;
-    items.push(...page.items);
+    items.push(...page.items.filter((item): item is SpotifyEpisodeItem => item !== null));
     url = page.next;
   }
 
