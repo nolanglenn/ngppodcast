@@ -1,16 +1,14 @@
 import { SpotifyEmbed } from '@/components/SpotifyEmbed';
-import { SpoilerCard } from '@/components/SpoilerCard';
-import type { Episode, RetroListItem } from '@/lib/types';
+import type { Episode } from '@/lib/types';
 
 // Set up a Patreon page for the show, then replace this with the real URL.
 const PATREON_URL = 'https://www.patreon.com/REPLACE_WITH_PATREON_HANDLE';
 
 interface HomeContentProps {
   latestEpisode: Episode | null;
-  gameOfTheWeek: RetroListItem | null;
 }
 
-export function HomeContent({ latestEpisode, gameOfTheWeek }: HomeContentProps) {
+export function HomeContent({ latestEpisode }: HomeContentProps) {
   return (
     <>
       {latestEpisode && (
@@ -60,19 +58,6 @@ export function HomeContent({ latestEpisode, gameOfTheWeek }: HomeContentProps) 
           </a>
         </div>
       </div>
-
-      {gameOfTheWeek && (
-        <div className="ngp-section">
-          <div className="ngp-gow">
-            <div className="ngp-gow-header">
-              <span>Game of the Week</span>
-            </div>
-            <SpoilerCard label="Hover to reveal this week's pick">
-              {gameOfTheWeek.game} ({gameOfTheWeek.platform})
-            </SpoilerCard>
-          </div>
-        </div>
-      )}
     </>
   );
 }

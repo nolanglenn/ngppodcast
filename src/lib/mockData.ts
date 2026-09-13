@@ -15,5 +15,5 @@ export const mockEpisodes: Episode[] = [
 ];
 
 export const mockRetroList: RetroListItem[] = [
-  { id: 'row-0', game: 'Chrono Trigger', platform: 'SNES', submittedBy: 'TestUser', notes: 'Great pick' },
+  { id: 'row-0', game: 'Chrono Trigger', platform: 'SNES', releaseYear: '1995', episodeNumber: '15' },
 ];

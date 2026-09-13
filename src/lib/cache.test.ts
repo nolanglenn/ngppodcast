@@ -97,7 +97,7 @@ describe('youtube match cache', () => {
 
 describe('retro list cache', () => {
   it('round-trips through get/set with no TTL', async () => {
-    const items = [{ id: 'row-0', game: 'Chrono Trigger', platform: 'SNES', submittedBy: 'A', notes: '' }];
+    const items = [{ id: 'row-0', game: 'Chrono Trigger', platform: 'SNES', releaseYear: '1995', episodeNumber: '15' }];
     await setCachedRetroList(items);
     expect(kvMock.set).toHaveBeenCalledWith('retro-list:v1', items);
 

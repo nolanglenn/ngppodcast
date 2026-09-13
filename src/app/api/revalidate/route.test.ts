@@ -39,7 +39,7 @@ describe('GET /api/revalidate', () => {
   });
 
   it('accepts the Apps Script webhook via query secret', async () => {
-    vi.mocked(refreshRetroList).mockResolvedValue([{ id: 'row-0', game: 'G', platform: 'P', submittedBy: 'S', notes: '' }]);
+    vi.mocked(refreshRetroList).mockResolvedValue([{ id: 'row-0', game: 'G', platform: 'P', releaseYear: '1995', episodeNumber: '1' }]);
     const req = new NextRequest('http://localhost/api/revalidate?secret=webhook-secret');
     const res = await GET(req);
     expect(res.status).toBe(200);

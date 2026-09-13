@@ -333,30 +333,9 @@ h3,
   white-space: nowrap;
 }
 
-/* ---- Game of the Week (home) ---- */
-
-.ngp-gow {
-  width: 100%;
-  max-width: 440px;
-  border-radius: 18px;
-  overflow: hidden;
-  border: 1px solid var(--border);
-}
-
-.ngp-gow-header {
-  background: var(--coral);
-  padding: 10px 20px;
-  text-align: center;
-}
-
-.ngp-gow-header span {
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  color: var(--on-coral);
-  text-transform: uppercase;
-}
-
+/* SpoilerCard's own styling — not currently used on any page (Game of the
+   Week is shelved pending a real data source), kept for the NGP-certified
+   voting reveal planned for the Retro Master List page. */
 .ngp-spoiler {
   background: var(--bg-elevated);
   padding: 32px 20px;

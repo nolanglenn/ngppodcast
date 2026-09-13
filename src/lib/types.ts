@@ -14,8 +14,10 @@ export interface RetroListItem {
   id: string;
   game: string;
   platform: string;
-  submittedBy: string;
-  notes: string;
+  /** The game's original release year, e.g. "1994". Free text — the sheet doesn't constrain it. */
+  releaseYear: string;
+  /** Which episode # featured this game, e.g. "541". Not (yet) linked to an episode slug. */
+  episodeNumber: string;
 }
 
 export interface YoutubeUpload {

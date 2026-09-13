@@ -104,4 +104,35 @@ describe('fetchAllSpotifyEpisodes', () => {
     expect(new Set(episodes.map((e) => e.slug)).size).toBe(3);
     expect(episodes.every((e) => e.slug.length > 0)).toBe(true);
   });
+
+  it('skips null items (episodes unavailable in the API market)', async () => {
+    process.env.SPOTIFY_CLIENT_ID = 'id';
+    process.env.SPOTIFY_CLIENT_SECRET = 'secret';
+
+    const fetchImpl = mockFetchSequence([
+      { ok: true, json: () => ({ access_token: 'token123', expires_in: 3600, token_type: 'Bearer' }) },
+      {
+        ok: true,
+        json: () => ({
+          items: [
+            null,
+            {
+              id: 'ep1',
+              name: 'Episode One',
+              description: '',
+              release_date: '2026-01-01',
+              duration_ms: 1000,
+              external_urls: { spotify: 'https://open.spotify.com/episode/ep1' },
+            },
+          ],
+          next: null,
+        }),
+      },
+    ]);
+
+    const episodes = await fetchAllSpotifyEpisodes('show1', fetchImpl);
+
+    expect(episodes).toHaveLength(1);
+    expect(episodes[0].id).toBe('ep1');
+  });
 });

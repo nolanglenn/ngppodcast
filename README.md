@@ -6,17 +6,30 @@ embeds) and a Retro Master List. See
 full design and `docs/superpowers/plans/2026-09-12-ngppodcast-site-rebuild.md`
 for how it was built.
 
-## Before launch: replace the placeholders
+## TODO before going live
 
-The site ships with **placeholder links that are broken until you replace
-them**. Do this before (or immediately after) going live:
+- [ ] Get real credentials (Spotify, YouTube, Google Sheets) and fill in
+      `.env.local` / Vercel env vars — see **Required environment variables**
+      below.
+- [ ] Replace the placeholder links — the site ships with these **broken
+      until replaced**:
 
-| What | Where | Placeholder |
-| --- | --- | --- |
-| Footer links (Spotify, YouTube, Apple Podcasts, Twitter/X, Discord) | `FOOTER_LINKS` in `src/app/layout.tsx` | `REPLACE_WITH_SHOW_ID`, `REPLACE_WITH_CHANNEL_HANDLE`, `REPLACE_WITH_SHOW_URL`, `REPLACE_WITH_HANDLE`, `REPLACE_WITH_INVITE` |
-| Contact email | `src/app/about/page.tsx` | `REPLACE_WITH_CONTACT_EMAIL` |
+  | What | Where | Placeholder |
+  | --- | --- | --- |
+  | Footer links (Spotify, YouTube, Apple Podcasts, Twitter/X, Discord) | `FOOTER_LINKS` in `src/app/layout.tsx` | `REPLACE_WITH_SHOW_ID`, `REPLACE_WITH_CHANNEL_HANDLE`, `REPLACE_WITH_SHOW_URL`, `REPLACE_WITH_HANDLE`, `REPLACE_WITH_INVITE` |
+  | Contact email | `src/app/about/page.tsx` | `REPLACE_WITH_CONTACT_EMAIL` |
+  | Patreon button | `PATREON_URL` in `src/app/HomeContent.tsx` | `REPLACE_WITH_PATREON_HANDLE` |
 
-Search the repo for `REPLACE_WITH_` to find them all.
+  Search the repo for `REPLACE_WITH_` to find them all.
+- [ ] Confirm the real Retro Master List sheet's header row matches what
+      `src/lib/sheets.ts` expects, and that it's shared correctly (see
+      **Required environment variables** below).
+- [ ] Game of the Week is shelved (see below) — no action needed unless
+      you're ready to build a real data source for it.
+- [ ] Set up the Apps Script webhook and `CRON_SECRET` (see **Near-instant
+      Retro List updates** below).
+- [ ] Domain cutover to ngppodcast.com — last step, **requires explicit
+      go-ahead**, not part of any of the above.
 
 ## Local development
 
@@ -67,7 +80,7 @@ Both suites run against mock data — no live API keys required.
 | `YOUTUBE_CHANNEL_ID` | The channel's ID (Channel → About → Share → Copy channel ID) |
 | `GOOGLE_SHEETS_API_KEY` | Google Cloud Console → enable "Google Sheets API" → create an API key (can be the same key as YouTube's) |
 | `RETRO_LIST_SHEET_ID` | The Sheet's ID from its URL: `docs.google.com/spreadsheets/d/<id>/edit` |
-| `RETRO_LIST_RANGE` | e.g. `Sheet1!A:D` — adjust to match the real tab name and column range |
+| `RETRO_LIST_RANGE` | e.g. `Sheet1!A2:D` — adjust to match the real tab name and column range. The `2` skips a leading title row if the sheet has one (ours does). |
 | `REVALIDATE_SECRET` | Any random string you generate — shared between this app and the Apps Script webhook below. **Anyone who can edit the Sheet can read this secret**, so it grants nothing but "refresh the retro list". |
 | `ADMIN_SECRET` | A *different* random string — guards `/api/admin/low-confidence-matches?secret=...` (the review list of uncertain YouTube matches). Deliberately separate from `REVALIDATE_SECRET` so Sheet editors don't get admin access and either can be rotated alone. |
 | `CRON_SECRET` | Any random string you generate — Vercel automatically sends it as `Authorization: Bearer <value>` on Cron requests once set as a Vercel env var. **If it isn't set as a Vercel env var, the daily cron job gets a 401 and silently does nothing.** |
@@ -76,21 +89,28 @@ Both suites run against mock data — no live API keys required.
 
 **The Retro Master List Google Sheet must be shared as "Anyone with the link —
 Viewer"** so the Sheets API can read it with just an API key. Its header row
-must contain (case-insensitive) `game`, `platform`, `submitted_by`, and
-`notes` columns — if your real Sheet uses different header text, update the
-column lookups in `src/lib/sheets.ts`. If the headers don't match, every row is
-skipped: the app logs an error and refuses to cache the empty result (so it
-retries rather than going silently blank forever), but the page stays empty
-until the headers or the lookups are fixed.
+must contain (case-insensitive) `Title`, `Original System`, `Date`, and
+`Episode #` columns — if your real Sheet uses different header text, update
+the column lookups in `src/lib/sheets.ts`. If the headers don't match, every
+row is skipped: the app logs an error and refuses to cache the empty result
+(so it retries rather than going silently blank forever), but the page stays
+empty until the headers or the lookups are fixed.
 
-### Verify the "Game of the Week" rule against the real sheet
+### Game of the Week — shelved for now
 
-The home page currently treats **the last row of the Retro Master List sheet**
-as the Game of the Week. That is an assumption about how the sheet is
-maintained, not a guaranteed-correct rule — check the real sheet's actual row
-order during setup (is the newest pick appended at the bottom, inserted at the
-top, or is there a separate "current pick" marker?) and adjust
-`src/app/page.tsx` if it doesn't hold.
+The home page no longer shows a "Game of the Week." The Retro Master List
+sheet turned out to be a log of games **already** covered (every row has an
+`Episode #`), not a queue of unplayed submissions, and there's no tracked
+source for "what's next" — it's decided and announced live, then again in
+Discord. Revisit this once there's a real place to read that pick from.
+
+### Future feature: NGP-certified voting
+
+Each host votes on whether a covered game is "NGP certified" (2 of 3 needed
+to pass). Not modeled yet — the sheet/API only has Title/Date/System/Episode #
+today. `SpoilerCard` (`src/components/SpoilerCard.tsx`) is kept unused in the
+codebase because its hover/focus-to-reveal pattern is a good fit for
+surfacing this on the Retro Master List page once vote data exists.
 
 ## Near-instant Retro List updates (Apps Script webhook)
 

@@ -7,7 +7,7 @@ export function RetroListClient({ items }: { items: RetroListItem[] }) {
   return (
     <SearchableList
       items={items}
-      searchKeys={['game', 'platform', 'submittedBy']}
+      searchKeys={['game', 'platform']}
       placeholder="Search games..."
       getKey={(i) => i.id}
       layout="grid"
@@ -17,7 +17,9 @@ export function RetroListClient({ items }: { items: RetroListItem[] }) {
             <span className="ngp-grid-item-title">{i.game}</span>
             <span className="ngp-badge">{i.platform}</span>
           </div>
-          <span className="ngp-grid-item-sub">Submitted by {i.submittedBy}</span>
+          <span className="ngp-grid-item-sub">
+            {[i.releaseYear, i.episodeNumber && `Episode #${i.episodeNumber}`].filter(Boolean).join(' · ')}
+          </span>
         </div>
       )}
     />
